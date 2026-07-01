@@ -13,7 +13,7 @@ export interface AspectPreset {
 
 export const ASPECTS: Record<AspectId, AspectPreset> = {
   square: { id: "square", label: "1:1", width: 1080, height: 1080 },
-  landscape: { id: "landscape", label: "16:9", width: 1280, height: 720 },
+  landscape: { id: "landscape", label: "16:9", width: 1600, height: 900 },
   portrait: { id: "portrait", label: "9:16", width: 1080, height: 1920 },
 };
 
