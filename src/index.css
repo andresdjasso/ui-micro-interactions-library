@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ * Easing curves are the "strong" custom variants from the
+ * emil-design-eng skill — the built-in CSS easings are too weak.
+ * ------------------------------------------------------------------ */
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo,
+    Consolas, monospace;
+
+  /* Strong ease-out for entering/exiting UI + anything responding to the user */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Strong ease-in-out for on-screen movement */
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  /* iOS-like drawer curve (Ionic) */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+:root {
+  /* Minimal studio canvas — soft off-white with a barely-there vignette */
+  --canvas: #f6f6f4;
+  --canvas-2: #efeeec;
+  --ink: #16150f;
+  --ink-soft: #6b6a63;
+  --hairline: rgba(0, 0, 0, 0.08);
+
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    /* Principle #8 — crisper text on macOS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background: var(--canvas);
+  }
+
+  /* Dynamic numbers never cause layout shift (principle #9). */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Headings balance; body copy avoids orphans (principle #10). */
+  .balance {
+    text-wrap: balance;
+  }
+  .pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Respect reduced motion globally — gentler, not zero. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

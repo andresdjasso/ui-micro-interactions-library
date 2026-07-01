@@ -1,0 +1,34 @@
+{
+  "name": "ui-micro-interactions-library",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A minimal showcase studio for clean UI micro-interactions — build components in real code, preview them, and export seamless looping videos for X.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "record": "node scripts/record.mjs",
+    "record:one": "node scripts/record.mjs --scene"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.1.1",
+    "@fontsource-variable/jetbrains-mono": "^5.1.1",
+    "motion": "^12.23.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.49.1",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}
