@@ -11,9 +11,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Only scan the main entry — keeps the dep optimizer from crawling the
+  // built dist-preview/ single-file bundle.
+  optimizeDeps: {
+    entries: ["index.html"],
+  },
   server: {
     port: 5179,
     strictPort: true,
+    host: true,
   },
   preview: {
     port: 4188,
