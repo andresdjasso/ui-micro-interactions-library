@@ -82,7 +82,7 @@ export function CampfireIcon() {
     <Tile bg="#FDBA63" ring="rgba(0,0,0,0.06)">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
         <path
-          d="M14 6.6 C 18.6 11.4 17.5 17.6 14 19.4 C 10.5 17.6 9.4 11.4 14 6.6 Z"
+          d="M14 7.6 C 18.6 12.4 17.5 18.6 14 20.4 C 10.5 18.6 9.4 12.4 14 7.6 Z"
           fill="#CE6E24"
         />
       </svg>
@@ -123,11 +123,11 @@ const SIGILS: ReactNode[] = [
     <rect x="16.4" y="6" width="5.6" height="5.6" rx="0.8" fill="#F4F4F4" />
     <rect x="6" y="16.4" width="5.6" height="5.6" rx="0.8" fill="#8A8A8A" />
   </svg>,
-  // ~toptyr-bilder — half disc + notched bar
+  // ~toptyr-bilder — half disc + notched bar (rebalanced toward optical center)
   <svg key="1" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
-    <path d="M6 6 A9 9 0 0 1 6 24 Z" fill="#F4F4F4" />
-    <rect x="16" y="7" width="6" height="6" rx="0.8" fill="#F4F4F4" />
-    <path d="M15 17 H22 L18.5 23 Z" fill="#9A9A9A" />
+    <path d="M7.5 6 A8 8 0 0 1 7.5 22 Z" fill="#F4F4F4" />
+    <rect x="15.5" y="6.5" width="6.2" height="6.2" rx="0.8" fill="#F4F4F4" />
+    <path d="M14.5 16.5 H21.5 L18 22.5 Z" fill="#9A9A9A" />
   </svg>,
   // ~fillux-dopyl — pinwheel of triangles
   <svg key="2" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>

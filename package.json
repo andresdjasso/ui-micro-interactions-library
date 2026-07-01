@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "preview:build": "vite build --config vite.preview.config.ts",
     "typecheck": "tsc -b --noEmit",
     "record": "node scripts/record.mjs",
     "record:one": "node scripts/record.mjs --scene"
@@ -29,6 +30,7 @@
     "playwright": "^1.49.1",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.7.2",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vite-plugin-singlefile": "^2.3.3"
   }
 }

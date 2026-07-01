@@ -16,6 +16,8 @@ export const EASE = {
   drawer: [0.32, 0.72, 0, 1],
   /** gentle, understated ease-out for delicate entrances + subtle state changes */
   entrance: [0.25, 0.46, 0.45, 0.94],
+  /** symmetric ease for fade-outs so exits don't vanish front-loaded/abruptly */
+  exit: [0.45, 0, 0.55, 1],
 } as const;
 
 // Spring presets. Apple-style { duration, bounce } — easier to reason about.

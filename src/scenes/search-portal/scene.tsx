@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { EASE } from "@/lib/motion";
 import type { Scene, SceneProps } from "@/scenes/types";
 import {
@@ -19,9 +19,8 @@ const T_HOVER = { duration: 0.16, ease: EASE.entrance };
 const T_PRESS = { duration: 0.1, ease: EASE.entrance };
 const T_FOCUS = { duration: 0.2, ease: EASE.entrance };
 
-const ENTER_FROM = { opacity: 0, y: 7, filter: "blur(7px)" };
+const ENTER_FROM = { opacity: 0, y: 7, filter: "blur(6px)" };
 const ENTER_TO = { opacity: 1, y: 0, filter: "blur(0px)" };
-const enter = (delay: number) => ({ duration: 0.62, ease: EASE.entrance, delay });
 
 /* ------------------------------------------------------------------ *
  * Content
@@ -42,10 +41,20 @@ const SHIPS = [
  * Small building blocks
  * ------------------------------------------------------------------ */
 
-/** Entrance-only wrapper (opacity + translateY + blur), staggered by delay. */
+/** Entrance-only wrapper (opacity + translateY + blur), staggered by delay.
+ *  Honors prefers-reduced-motion: opacity-only, no movement/blur, no stagger. */
 function Enter({ delay, children }: { delay: number; children: ReactNode }) {
+  const reduce = useReducedMotion();
   return (
-    <motion.div initial={ENTER_FROM} animate={ENTER_TO} transition={enter(delay)}>
+    <motion.div
+      initial={reduce ? { opacity: 0 } : ENTER_FROM}
+      animate={reduce ? { opacity: 1 } : ENTER_TO}
+      transition={{
+        duration: reduce ? 0.2 : 0.52,
+        ease: EASE.entrance,
+        delay: reduce ? 0 : delay,
+      }}
+    >
       {children}
     </motion.div>
   );
@@ -125,6 +134,7 @@ function SearchBar({
   setQuery: (v: string) => void;
 }) {
   const lifted = hovered || focused;
+  const reduce = useReducedMotion();
   return (
     <div
       tabIndex={0}
@@ -185,8 +195,10 @@ function SearchBar({
           style={{ display: "grid", placeItems: "center" }}
         >
           <motion.span
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, ease: "linear", duration: 8 }}
+            // very slow passive rotation; duration divides loopMs (10s) so the
+            // seam is exact, and it stops entirely under reduced motion
+            animate={reduce ? {} : { rotate: 360 }}
+            transition={{ repeat: Infinity, ease: "linear", duration: 10 }}
             style={{ display: "grid", placeItems: "center" }}
           >
             <Starburst />
@@ -247,7 +259,8 @@ function SearchBar({
               fontSize: 16,
               lineHeight: 1,
               color: "#9A9A9A",
-              transform: "translateY(-0.5px)",
+              // slashes carry mass toward bottom-left — nudge up + right to center optically
+              transform: "translate(0.5px, -1px)",
             }}
           >
             /
@@ -279,7 +292,7 @@ function AppRow({
     <motion.div
       {...bind}
       className="relative flex cursor-default items-center"
-      style={{ height: 44 }}
+      style={{ height: 40 }}
       initial={false}
       animate={{ y: pressed ? 1 : 0 }}
       transition={pressed ? T_PRESS : T_HOVER}
@@ -321,7 +334,7 @@ function AppRow({
           animate={{ backgroundColor: hovered ? "#E8E8E8" : "#F0F0F0" }}
           transition={T_HOVER}
           style={{
-            padding: "4px 8px",
+            padding: "3px 8px 5px",
             borderRadius: 999,
             fontSize: 10.5,
             fontWeight: 600,
@@ -354,7 +367,7 @@ function ShipRow({
     <motion.div
       {...bind}
       className="relative flex cursor-default items-center"
-      style={{ height: 44 }}
+      style={{ height: 40 }}
       initial={false}
       animate={{ y: pressed ? 1 : 0 }}
       transition={pressed ? T_PRESS : T_HOVER}
@@ -402,20 +415,28 @@ function Link({
 }) {
   return (
     <motion.span
-      className="whitespace-pre"
+      className="relative inline-block whitespace-pre"
       initial={false}
-      animate={{
-        color: hovered ? "#111111" : "#3A3A3A",
-        borderBottomWidth: hovered ? 1.5 : 1,
-      }}
+      animate={{ color: hovered ? "#111111" : "#3A3A3A" }}
       transition={{ duration: 0.14, ease: EASE.entrance }}
-      style={{
-        borderBottomStyle: "solid",
-        borderBottomColor: "#3A3A3A",
-        paddingBottom: 1,
-      }}
+      style={{ verticalAlign: "baseline" }}
     >
       {query !== undefined ? <Match text={children} query={query} /> : children}
+      {/* underline as a scaleY bar — transform/opacity only, never animate width */}
+      <motion.span
+        aria-hidden
+        className="pointer-events-none absolute left-0 right-0"
+        style={{
+          bottom: -1,
+          height: 1.5,
+          borderRadius: 1,
+          background: "currentColor",
+          transformOrigin: "bottom",
+        }}
+        initial={false}
+        animate={{ scaleY: hovered ? 1 : 0.667, opacity: hovered ? 1 : 0.9 }}
+        transition={{ duration: 0.14, ease: EASE.entrance }}
+      />
     </motion.span>
   );
 }
@@ -469,6 +490,7 @@ function SearchPortal({ playing, loopKey }: SceneProps) {
   const [pressed, setPressed] = useState<string | null>(null);
   const [phase, setPhase] = useState<"in" | "out">("in");
   const [barHover, setBarHover] = useState(false);
+  const reduce = useReducedMotion();
 
   // Autoplay demo timeline — seamless: starts blank (entrance), ends blank (exit).
   useEffect(() => {
@@ -531,10 +553,12 @@ function SearchPortal({ playing, loopKey }: SceneProps) {
         initial={false}
         animate={
           phase === "out"
-            ? { opacity: 0, y: 3, filter: "blur(4px)" }
+            ? reduce
+              ? { opacity: 0 }
+              : { opacity: 0, y: 3, filter: "blur(4px)" }
             : { opacity: 1, y: 0, filter: "blur(0px)" }
         }
-        transition={{ duration: 0.2, ease: EASE.entrance }}
+        transition={{ duration: reduce ? 0.18 : 0.26, ease: EASE.exit }}
         style={{ width: W }}
       >
         {/* search bar — enters first */}
@@ -552,26 +576,29 @@ function SearchPortal({ playing, loopKey }: SceneProps) {
 
         {/* results card — shell enters second */}
         <Enter delay={0.08}>
-          <div
+          <motion.div
+            initial={false}
+            animate={{ y: query ? -2 : 0 }}
+            transition={{ duration: 0.22, ease: EASE.entrance }}
             style={{
               marginTop: 17,
               borderRadius: 14,
               background: "#FFFFFF",
               boxShadow:
                 "0 0 0 1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.035), 0 18px 44px rgba(0,0,0,0.035)",
-              padding: "20px 20px 24px",
+              padding: "18px 20px 20px",
             }}
           >
             <motion.div
               initial={false}
-              animate={{ opacity: query ? 1 : 0.9, y: query ? -2 : 0 }}
+              animate={{ opacity: query ? 1 : 0.88 }}
               transition={{ duration: 0.22, ease: EASE.entrance }}
             >
               {/* Section: Apps, Groups & Collections */}
               <Enter delay={0.14}>
                 <SectionLabel>Apps, Groups &amp; Collections</SectionLabel>
               </Enter>
-              <div style={{ marginTop: 11 }}>
+              <div style={{ marginTop: 10 }}>
                 {APPS.map((app, i) => (
                   <Enter key={app.id} delay={0.17 + i * 0.03}>
                     <AppRow
@@ -586,7 +613,7 @@ function SearchPortal({ playing, loopKey }: SceneProps) {
               </div>
 
               {/* Section: Recent posts */}
-              <div style={{ marginTop: 20, marginBottom: 12 }}>
+              <div style={{ marginTop: 18, marginBottom: 10 }}>
                 <Enter delay={0.28}>
                   <SectionLabel>Recent posts</SectionLabel>
                 </Enter>
@@ -618,7 +645,7 @@ function SearchPortal({ playing, loopKey }: SceneProps) {
               </div>
 
               {/* Section: Ships */}
-              <div style={{ marginTop: 20, marginBottom: 12 }}>
+              <div style={{ marginTop: 18, marginBottom: 10 }}>
                 <Enter delay={0.41}>
                   <SectionLabel>Ships</SectionLabel>
                 </Enter>
@@ -637,7 +664,7 @@ function SearchPortal({ playing, loopKey }: SceneProps) {
                 ))}
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </Enter>
       </motion.div>
     </div>
