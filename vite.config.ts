@@ -20,6 +20,10 @@ export default defineConfig({
     port: 5179,
     strictPort: true,
     host: true,
+    // allow the app's preview browser to reach the server through any
+    // proxied hostname (Vite 6 blocks non-localhost Hosts by default)
+    allowedHosts: true,
+    cors: true,
   },
   preview: {
     port: 4188,
